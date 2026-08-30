@@ -1,6 +1,7 @@
 import speech_recognition as sr
 import pyttsx3
 import os
+import xml.etree.ElementTree as ET
 from Bio import Entrez
 
 # Required by NCBI's usage policy for Entrez API calls.
@@ -130,6 +131,45 @@ def fetch_abstract(pmid):
         return f"Could not fetch abstract: {e}"
 
 
+def get_pmc_id(pmid):
+    """Check whether this PubMed article has a full-text copy deposited in PMC
+    (open access or NIH-funded). Returns None if not — most paywalled journal
+    content (JACC, JAMA, Eur Heart J, etc.) will not have one."""
+    try:
+        with Entrez.elink(dbfrom="pubmed", db="pmc", id=pmid, linkname="pubmed_pmc") as handle:
+            record = Entrez.read(handle)
+        linksets = record[0].get("LinkSetDb", [])
+        if not linksets:
+            return None
+        links = linksets[0].get("Link", [])
+        return links[0]["Id"] if links else None
+    except Exception:
+        return None
+
+
+def fetch_full_text(pmid):
+    """Fetch full paper body text from PMC if available. Returns None if this
+    article has no PMC copy (caller should fall back to the abstract)."""
+    pmcid = get_pmc_id(pmid)
+    if not pmcid:
+        return None
+    try:
+        with Entrez.efetch(db="pmc", id=pmcid, rettype="full", retmode="xml") as handle:
+            xml_data = handle.read()
+        root = ET.fromstring(xml_data)
+        body = root.find(".//body")
+        if body is None:
+            return None
+        paragraphs = [
+            "".join(p.itertext()).strip()
+            for p in body.iter("p")
+        ]
+        full_text = "\n\n".join(p for p in paragraphs if p)
+        return full_text if full_text.strip() else None
+    except Exception:
+        return None
+
+
 def save_reference(title, pmid):
     url = f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/"
     with open(REF_FILE, "a") as f:
@@ -143,11 +183,22 @@ def navigate_results(titles, pmids):
         speak(f"Article {index + 1}: {titles[index]}")
         while True:
             cmd = listen_for_speech(
-                "Say 'abstract', 'next', 'previous', or 'save'."
+                "Say 'abstract', 'full text', 'next', 'previous', or 'save'."
             )
             if cmd is None:
                 continue
-            if "abstract" in cmd:
+            if "full text" in cmd:
+                full = fetch_full_text(pmids[index])
+                if full:
+                    speak("Full text is available. Reading now. This may take a while.")
+                    speak(full)
+                else:
+                    speak(
+                        "Full text is not available in PubMed Central for this "
+                        "article — likely paywalled. Here is the abstract instead."
+                    )
+                    speak(fetch_abstract(pmids[index]))
+            elif "abstract" in cmd:
                 abstract = fetch_abstract(pmids[index])
                 speak(f"Abstract: {abstract}")
             elif "next" in cmd:
@@ -160,7 +211,7 @@ def navigate_results(titles, pmids):
             elif "save" in cmd:
                 save_reference(titles[index], pmids[index])
             else:
-                speak("Command not recognized. Say 'abstract', 'next', 'previous', or 'save'.")
+                speak("Command not recognized. Say 'abstract', 'full text', 'next', 'previous', or 'save'.")
         if index >= len(titles):
             speak("No more articles.")
 
