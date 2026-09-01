@@ -4,6 +4,14 @@ A live, interactive voice tool for Andrew (blind retired cardiologist) to search
 
 **This is a separate project from `~/CardioClaw/`.** Don't mix work on the two in one conversation — if a session drifts into CardioClaw, say so and suggest picking it up in its own thread.
 
+## Starting a session for this project
+1. Open the sidebar (left panel listing your chats/sessions).
+2. Either click an existing session already scoped to this project, **or** start a new chat.
+3. If starting new: set the working directory to `~/Documents/voice_pubmed_bot` before/when the session begins (in a terminal: `cd ~/Documents/voice_pubmed_bot` before launching; in a GUI client, use its folder picker for a new chat) — this is what makes this file load automatically.
+4. Confirm it loaded — the session should already know about the mic/STT issues, the Muse plan, etc. without you re-explaining.
+5. Rename the session (sidebar ⋮ menu, or ask Claude to do it) to something clear, e.g. "voice_pubmed_bot — <what you're doing>", so it's findable later.
+6. For the Muse upgrade specifically: work on the `muse-upgrade` branch (already created, pushed to GitHub) — `git checkout muse-upgrade` — so `main` stays untouched until it's verified.
+
 ## Architecture
 - Single file, `voice_pubmed_bot.py`. Procedural, synchronous: prompt → listen → parse → act, looped.
 - Search/fetch layer: `Bio.Entrez` against the real PubMed API (esearch/esummary/efetch) — reliable, fixed from an earlier BeautifulSoup-scraping version.
