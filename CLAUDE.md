@@ -1,4 +1,4 @@
-> **Start here:** Read [AGENTS.md](AGENTS.md) and [CURRENT_BASELINE.md](CURRENT_BASELINE.md). The audited working version is **GPT-Realtime-2.1 in this repository**, on `muse-upgrade`. Do not restart from the older VoicePubMedWeb or mistake GPT-Live for the tested baseline. The history and version map are in [PROJECT_HISTORY_AUDIT.md](PROJECT_HISTORY_AUDIT.md).
+> **Start here:** Read [AGENTS.md](AGENTS.md) and [CURRENT_BASELINE.md](CURRENT_BASELINE.md). The audited working version is **GPT-Realtime-2.1 in this repository**, on `realtime-reader`. Do not restart from the older VoicePubMedWeb or mistake GPT-Live for the tested baseline. The history and version map are in [PROJECT_HISTORY_AUDIT.md](PROJECT_HISTORY_AUDIT.md).
 
 # voice_pubmed_bot
 
@@ -12,7 +12,7 @@ A live, interactive voice tool for Andrew (blind retired cardiologist) to search
 3. If starting new: set the working directory to `~/Documents/voice_pubmed_bot` before/when the session begins (in a terminal: `cd ~/Documents/voice_pubmed_bot` before launching; in a GUI client, use its folder picker for a new chat) — this is what makes this file load automatically.
 4. Confirm it loaded — the session should already know about the mic/STT issues, the Muse plan, etc. without you re-explaining.
 5. Rename the session (sidebar ⋮ menu, or ask Claude to do it) to something clear, e.g. "voice_pubmed_bot — <what you're doing>", so it's findable later.
-6. For the Muse upgrade specifically: work on the `muse-upgrade` branch (already created, pushed to GitHub) — `git checkout muse-upgrade` — so `main` stays untouched until it's verified.
+6. For the Muse upgrade specifically: work on the `realtime-reader` branch (already created, pushed to GitHub) — `git checkout realtime-reader` — so `main` stays untouched until it's verified.
 
 ## Current primary path — 2026-09-11
 
@@ -29,7 +29,7 @@ below document the retained fallback and historical work.
 - Voice input: **Muse Voice Transcribe** streaming ASR (`muse_stt.py`), with `speech_recognition` (PyAudio + Google's free STT) as an automatic fallback. Output: OpenAI `gpt-4o-mini-tts`, voice `nova`, played locally through AVAudioPlayer (`nova_speech.py`).
 - References get appended to `references.txt` in this folder.
 
-## Muse Voice Transcribe upgrade — DONE (on `muse-upgrade`, in test)
+## Muse Voice Transcribe upgrade — DONE (on `realtime-reader`, in test)
 Meta Superintelligence Labs' streaming ASR (launched Sept 1, 2026) — native endpointing, `wss://api.meta.ai/v1/asr/realtime`, ~$0.18/audio-hour via a Meta Model API key.
 - **`muse_stt.py`** — self-contained client. `transcribe_once(device, initial_timeout, max_seconds)` opens the mic (`sounddevice`, 24 kHz mono s16) + WebSocket, streams in `ENDPOINTING` mode, returns the final transcript when the model detects end-of-turn. Raises `STTError` on any transport/API failure. `available()` reports whether it can run.
 - **`voice_pubmed_bot.py`** — `capture()` is the single listen entry point: tries Muse, falls back to Google on `STTError` or when `MODEL_API_KEY` is unset (warns once). `listen_for_speech()` / `listen_for_query()` are thin wrappers over it.

@@ -1,5 +1,11 @@
 # Voice PubMed project history audit
 
+Current GitHub name: **steve-zoloth/voice-pubmed-reader**, default branch
+**realtime-reader**. Renamed September 11 from voice_pubmed_bot / muse-upgrade;
+older names below are historical. The local checkout remains
+~/Documents/voice_pubmed_bot. The rename preserves checkpoint da6237f and all
+application code; see CURRENT_BASELINE.md.
+
 Audited September 11, 2026 at Steve's request after a mistaken GPT-Live test
 reopened issues already solved in the working version.
 
@@ -31,7 +37,7 @@ returned. Raw chat exports and credentials are not included in this repository.
 
 | Location | Repository / role | Baseline decision |
 | --- | --- | --- |
-| ~/Documents/voice_pubmed_bot | steve-zoloth/voice_pubmed_bot; current Realtime and Muse/Nova readers | Latest user-confirmed voice baseline. |
+| ~/Documents/voice_pubmed_bot | steve-zoloth/voice-pubmed-reader; current Realtime and Muse/Nova readers | Latest user-confirmed voice baseline. |
 | ~/Desktop/VoiceBot_New-main | steve-zoloth/VoicePubMedReader; Researcher Pro, library/citation/bibliography features | Separate older feature-rich implementation; preserve and identify explicitly. |
 | ~/VoicePubMedWeb | March Flask app and Apple Shortcuts reader endpoints | Older implementation, not the Sept 10 tested Realtime voice reader. |
 | ~/CardioClaw | Automated cardiology podcast and separate voice companion | Separate project, not Voice PubMed. |

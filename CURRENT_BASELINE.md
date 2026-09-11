@@ -1,11 +1,11 @@
 # Current baseline — audited September 11, 2026
 
-The current working Voice PubMed Reader is **voice_pubmed_bot on muse-upgrade**,
+The current working Voice PubMed Reader is **voice-pubmed-reader on realtime-reader**,
 using **GPT-Realtime-2.1 over browser WebRTC**. It is not the old VoicePubMedWeb
 Flask app, not Researcher Pro, and not GPT-Live. Read AGENTS.md first.
 
-Canonical repository: https://github.com/steve-zoloth/voice_pubmed_bot
-Canonical branch: https://github.com/steve-zoloth/voice_pubmed_bot/tree/muse-upgrade
+Canonical repository: https://github.com/steve-zoloth/voice-pubmed-reader
+Canonical branch: https://github.com/steve-zoloth/voice-pubmed-reader/tree/realtime-reader
 Local checkout: /Users/stevezoloth/Documents/voice_pubmed_bot
 
 ## Launch the established reader
@@ -77,6 +77,21 @@ any consolidation is a separate scoped task, not silent deletion or rewriting.
 Before this audit, HEAD was a745c08 and the working Realtime files were untracked;
 GitHub therefore did not contain the tested interface or its enhancements.
 The checkpoint commit containing this file records those existing source files,
-tests and audit instructions on muse-upgrade. The external audit report records
+tests and audit instructions on realtime-reader. The external audit report records
 the resulting commit and push verification; use Git history for the exact hash.
 See PROJECT_HISTORY_AUDIT.md for the full evidence and version map.
+
+## Repository rename — September 11, 2026
+
+At Steve's request, GitHub repository voice_pubmed_bot was renamed to
+voice-pubmed-reader, and branch muse-upgrade to realtime-reader. The latter is
+now the GitHub default branch. Both names refer to the same preserved Git
+history, not a rebuilt app. The local directory and launcher names stay as
+documented above so existing launch paths continue to work.
+
+Before renaming, local source and origin/muse-upgrade matched checkpoint
+da6237f3523c4f96c2cdee925336281860f01652 exactly, and all 41 offline tests passed.
+After renaming, the GitHub branch retained that exact commit. This update changes
+repository names and documentation only; application/audio code is unchanged.
+The Sept 10 user-approved Realtime experience and Sept 11 enhancements are
+preserved. The later enhancements still require the user's audible retest.

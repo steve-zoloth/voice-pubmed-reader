@@ -1,4 +1,4 @@
-> **Start here:** Read [AGENTS.md](AGENTS.md) and [CURRENT_BASELINE.md](CURRENT_BASELINE.md). The audited working version is **GPT-Realtime-2.1 in this repository**, on `muse-upgrade`. Do not restart from the older VoicePubMedWeb or mistake GPT-Live for the tested baseline. The history and version map are in [PROJECT_HISTORY_AUDIT.md](PROJECT_HISTORY_AUDIT.md).
+> **Start here:** Read [AGENTS.md](AGENTS.md) and [CURRENT_BASELINE.md](CURRENT_BASELINE.md). The audited working version is **GPT-Realtime-2.1 in this repository**, on `realtime-reader`. Do not restart from the older VoicePubMedWeb or mistake GPT-Live for the tested baseline. The history and version map are in [PROJECT_HISTORY_AUDIT.md](PROJECT_HISTORY_AUDIT.md).
 
 # Voice PubMed Reader
 

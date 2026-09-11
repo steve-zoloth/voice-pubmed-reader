@@ -10,10 +10,10 @@ reflect the September 11, 2026 audit of all seven accessible project tasks and
 
 ## Identify the correct version
 
-- Authoritative working voice reader: this repository, voice_pubmed_bot.
+- Authoritative working voice reader: this repository, voice-pubmed-reader.
 - Local checkout: /Users/stevezoloth/Documents/voice_pubmed_bot.
-- GitHub: https://github.com/steve-zoloth/voice_pubmed_bot.
-- Established development branch: muse-upgrade; check CURRENT_BASELINE.md and
+- GitHub: https://github.com/steve-zoloth/voice-pubmed-reader.
+- Established development branch: realtime-reader; check CURRENT_BASELINE.md and
   current Git state before selecting a different branch.
 - Primary launcher: run_realtime_pubmed.command.
 - Primary model: gpt-realtime-2.1, browser WebRTC, Marin voice.
