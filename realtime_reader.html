@@ -1,0 +1,75 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Voice PubMed Reader — Realtime</title>
+<style>body{font:1.3rem system-ui;max-width:48rem;margin:3rem auto;padding:1rem;color:#142633;background:#f6f8fa}button{font:inherit;padding:1rem;margin:.3rem}button:focus{outline:4px solid #0076b5}#transcript{white-space:pre-wrap}</style>
+<h1>Voice PubMed Reader</h1><p>Realtime voice reader. Your microphone audio and requested article text are sent to OpenAI. You will hear an AI-generated voice.</p>
+<button id="start">Start voice</button><button id="stop" disabled>Stop speaking</button><button id="end" disabled>End session</button>
+<p id="status" role="status">Ready. Activate Start voice and allow microphone access.</p><p>Try “read the abstract,” “go to results,” “what sections are available,” “skip ahead ten seconds,” or “keep reading.” Authors are omitted unless requested. Time skips are approximate.</p><p>Muse fallback: end this session, then open run_voice_pubmed_bot.command.</p>
+<audio id="audio" autoplay controls aria-label="AI voice playback"></audio><details><summary>Spoken transcript</summary><div id="transcript"></div></details>
+<script>
+const token=location.hash.slice(1); history.replaceState(null,'',location.pathname);
+const start=document.querySelector('#start'), stop=document.querySelector('#stop'), end=document.querySelector('#end'), statusEl=document.querySelector('#status'), audio=document.querySelector('#audio'), transcript=document.querySelector('#transcript');
+let playbackStart=null, heardSeconds=0;
+let pc, dc, stream, reader, active=false, generation=0, epoch=0, pending=Promise.resolve(), timer;
+function announce(text){statusEl.textContent=text; const utterance=new SpeechSynthesisUtterance(text); speechSynthesis.cancel(); speechSynthesis.speak(utterance);}
+function send(event){if(dc?.readyState==='open')dc.send(JSON.stringify(event));}
+async function post(path,body){const response=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json','X-Reader-Token':token},body:JSON.stringify(body),signal:AbortSignal.timeout(45000)});const result=await response.json();if(!response.ok)throw Error(result.error||'Connection failed');return result;}
+function cleanup(){playbackStart=null;heardSeconds=0;generation++;epoch++;clearTimeout(timer);if(dc)dc.close();if(pc)pc.close();stream?.getTracks().forEach(t=>t.stop());audio.srcObject=null;pc=dc=stream=null;active=false;reader=null;start.disabled=false;stop.disabled=end.disabled=true;}
+function silence(){freezePlayback();epoch++;if(active)send({type:'response.cancel'});send({type:'output_audio_buffer.clear'});}
+function freezePlayback(){if(playbackStart!==null){heardSeconds=(performance.now()-playbackStart)/1000;playbackStart=null;}}
+async function handle(event, sessionGeneration){
+ if(sessionGeneration!==generation)return;
+ if(event.type==='response.created')active=true;
+ if(event.type==='output_audio_buffer.started'){playbackStart=performance.now();heardSeconds=0;}
+ if(event.type==='output_audio_buffer.stopped')freezePlayback();
+ if(event.type==='input_audio_buffer.speech_started'){freezePlayback();epoch++;statusEl.textContent='Listening.';}
+ if(event.type==='response.output_audio_transcript.done'){transcript.textContent=(transcript.textContent+'\n'+event.transcript).slice(-20000);}
+ if(event.type==='error'){if(event.error?.code==='response_cancel_not_active')return;cleanup();announce('Voice connection error. Start voice to retry, or use the Muse launcher.');return;}
+ if(event.type!=='response.done')return;
+ active=false;
+ const calls=(event.response?.output||[]).filter(x=>x.type==='function_call');
+ if(!calls.length||event.response.status!=='completed')return;
+ const turnEpoch=epoch;
+ pending=pending.then(async()=>{
+   let stopped=false;
+   for(const call of calls){
+     if(sessionGeneration!==generation)return;
+     if(turnEpoch!==epoch){
+       send({type:'conversation.item.create',item:{type:'function_call_output',call_id:call.call_id,output:JSON.stringify({text:'Command cancelled by interruption. Wait for an explicit new request.'})}});
+       continue;
+     }
+     statusEl.textContent='Retrieving article information. You can interrupt or stop.';
+     let result;
+     try{
+       if(call.name!=='reader')throw Error('Unknown tool');
+       result=await post('/tool',{reader,arguments:JSON.parse(call.arguments),heard_seconds:heardSeconds});
+     }catch(error){result={error:error.message};}
+     if(sessionGeneration!==generation)return;
+     if(turnEpoch===epoch)statusEl.textContent='Listening. You can interrupt at any time.';
+     if(result.stopped)stopped=true;
+     send({type:'conversation.item.create',item:{type:'function_call_output',call_id:call.call_id,output:JSON.stringify(result)}});
+   }
+   // An interrupted or superseded request must never restart narration.
+   if(sessionGeneration===generation && turnEpoch===epoch && !active && !stopped)send({type:'response.create',response:{instructions:'Speak only the reader tool text. No introduction, commentary, suggestions or follow-up question. Read requested source passages faithfully.'}});
+ }).catch(()=>{cleanup();announce('Reader connection failed. Restart voice or use Muse.');});
+}
+start.onclick=async()=>{
+ cleanup();const sessionGeneration=generation;start.disabled=true;statusEl.textContent='Connecting…';speechSynthesis.cancel();
+ try{
+   stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+   if(sessionGeneration!==generation){stream.getTracks().forEach(t=>t.stop());return;}
+   pc=new RTCPeerConnection();pc.ontrack=e=>{audio.srcObject=e.streams[0];audio.play().catch(()=>announce('Activate the audio play button to hear the voice.'));};
+   pc.onconnectionstatechange=()=>{if(pc && ['failed','disconnected'].includes(pc.connectionState)){cleanup();announce('Voice disconnected. Restart voice or use the Muse launcher.');}};
+   stream.getTracks().forEach(track=>pc.addTrack(track,stream));dc=pc.createDataChannel('oai-events');
+   dc.onmessage=e=>{try{handle(JSON.parse(e.data),sessionGeneration);}catch{cleanup();announce('Voice data error. Restart voice.');}};
+   dc.onclose=()=>{if(sessionGeneration===generation){cleanup();announce('Voice session ended.');}};
+   dc.onopen=()=>{clearTimeout(timer);stop.disabled=end.disabled=false;statusEl.textContent='Listening. You can interrupt at any time.';send({type:'response.create',response:{instructions:"Say only: I am your AI PubMed reader. What would you like to look up?"}});};
+   const offer=await pc.createOffer();await pc.setLocalDescription(offer);
+   const result=await post('/session',{sdp:offer.sdp});
+   if(sessionGeneration!==generation)return;
+   reader=result.reader;await pc.setRemoteDescription({type:'answer',sdp:result.sdp});
+   timer=setTimeout(()=>{if(sessionGeneration===generation&&dc?.readyState!=='open'){cleanup();announce('Voice connection timed out. Restart voice or use Muse.');}},20000);
+ }catch(error){if(sessionGeneration===generation){cleanup();announce(error.message+' Use Start voice to retry, or use the Muse launcher.');}}
+};
+stop.onclick=silence;end.onclick=()=>{cleanup();announce('Session ended. Microphone released.');};
+window.addEventListener('pagehide',cleanup);
+document.addEventListener('keydown',event=>{if(event.key==='Escape'){silence();event.preventDefault();}});
+</script></html>

@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.env
+
+# Local credentials, environments and audio/debug captures
+.venv/
+.env.*
+!.env.example
+.openai_api_key
+.ncbi_api_key
+*.log
+*.wav
+*.mp3
+*.aiff
