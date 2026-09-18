@@ -109,3 +109,24 @@ on realtime-reader. Audible user verification remains outstanding.
 All 41 offline tests passed again on September 18; no microphone or audio
 was activated. The previous checkpoint is 4a28236; Git history records the
 new checkpoint hash.
+
+## User acceptance and next refinements — September 18, 2026
+
+Steve tested checkpoint e21558c and reported the startup/basic flow and further
+functions all worked. Remaining feedback: too chatty and long pauses after new
+instructions. This supersedes the earlier pending Steve acceptance statements;
+Andrew's independent-use acceptance remains outstanding.
+
+New refinements prohibit spoken pre-tool acknowledgments and post-reading chatter,
+use configurable high semantic-VAD eagerness (auto restores the old wait), and
+cache up to 12 successfully retrieved sources per session. 44 offline tests pass.
+These refinements require a listening check; improvement has not been measured.
+
+mac_app contains a native Mac launcher and reproducible builder. Steve's app is
+installed at ~/Applications/Voice PubMed Reader.app and uses the existing local
+checkout/environment. Native compilation and signature checks pass. UI lifecycle
+verification is blocked by computer-use permissions, not a confirmed app failure.
+No live audio was started for verification. End session in the browser before
+quitting the launcher. See ANDREW_SETUP.md for Siri setup and installation limits.
+Andrew wants both Mac and iPhone/iPad. Mobile secure hosting/private-access choice
+is pending; no mobile deployment or self-contained Andrew installer is claimed.

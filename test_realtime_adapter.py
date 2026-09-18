@@ -49,6 +49,28 @@ class ReaderTests(unittest.TestCase):
         self.reader.total = None
         self.assertIn('Article 1 of 2 loaded:', self.reader.execute('previous')['text'])
 
+    def test_revisiting_article_reuses_source_but_not_other_article(self):
+        self.search()
+        with patch.object(rt.structured_reader, 'abstract', return_value=([('Abstract', 'Source')], 'Author')) as fetch:
+            first = self.reader.execute('abstract')
+            self.reader.execute('next')
+            self.reader.execute('abstract')
+            self.reader.execute('previous')
+            self.assertEqual(first, self.reader.execute('abstract'))
+            self.assertEqual(fetch.call_count, 2)
+
+    def test_failed_source_fetch_is_retried(self):
+        self.search()
+        with patch.object(rt.structured_reader, 'abstract', side_effect=[RuntimeError('network'), ([('Abstract', 'Recovered')], 'Author')]) as fetch:
+            with self.assertRaises(RuntimeError):
+                self.reader.execute('abstract')
+            self.assertIn('Recovered', self.reader.execute('abstract')['text'])
+            self.assertEqual(fetch.call_count, 2)
+
+    def test_turn_wait_can_return_to_previous_setting(self):
+        with patch.dict(rt.os.environ, {'VOICE_PUBMED_TURN_EAGERNESS': 'auto'}):
+            self.assertEqual(rt.session_config()['audio']['input']['turn_detection']['eagerness'], 'auto')
+
     def test_full_text_fallback(self):
         self.search()
         with patch.object(rt.structured_reader,'full_text',return_value=[]) as full, patch.object(rt.structured_reader,'abstract',return_value=([('Abstract','Abstract text')], 'Authors')):

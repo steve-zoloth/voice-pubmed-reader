@@ -48,7 +48,7 @@ async function handle(event, sessionGeneration){
      send({type:'conversation.item.create',item:{type:'function_call_output',call_id:call.call_id,output:JSON.stringify(result)}});
    }
    // An interrupted or superseded request must never restart narration.
-   if(sessionGeneration===generation && turnEpoch===epoch && !active && !stopped)send({type:'response.create',response:{instructions:'Speak only the reader tool text. No introduction, commentary, suggestions or follow-up question. Read requested source passages faithfully.'}});
+   if(sessionGeneration===generation && turnEpoch===epoch && !active && !stopped)send({type:'response.create',response:{instructions:'Speak only the reader tool text. No introduction, commentary, suggestions or follow-up question. Read requested source passages faithfully and completely. Then stop. Never add an acknowledgment, summary or invitation to continue.'}});
  }).catch(()=>{cleanup();announce('Reader connection failed. Restart voice or use Muse.');});
 }
 start.onclick=async()=>{
