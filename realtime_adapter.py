@@ -298,8 +298,14 @@ def main():
                 self.reply(400, json.dumps({'error': message}).encode())
     server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
     url = f'http://127.0.0.1:{server.server_port}/#{token}'
+    # Use the established Nova output before opening the browser; no microphone
+    # is active and the announcement cannot overlap a new Realtime session.
+    try:
+        backend.speak('Opening PubMed. Press Enter in the browser to start voice.')
+    except Exception:
+        print('Startup speech failed. In the browser, press Enter to start voice.', flush=True)
     webbrowser.open(url)
-    print('Voice PubMed Realtime opened in your browser. Activate Start voice. Control-C closes the local server.')
+    print('Voice PubMed Realtime opened in your browser. Press Enter to start voice. Control-C closes the local server.')
     try:
         server.serve_forever()
     except KeyboardInterrupt:

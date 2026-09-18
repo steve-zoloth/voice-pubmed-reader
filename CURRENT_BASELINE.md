@@ -95,3 +95,17 @@ After renaming, the GitHub branch retained that exact commit. This update change
 repository names and documentation only; application/audio code is unchanged.
 The Sept 10 user-approved Realtime experience and Sept 11 enhancements are
 preserved. The later enhancements still require the user's audible retest.
+
+## Startup accessibility — September 12, 2026
+
+Steve reported that silent launch gave no indication the reader was present or
+waiting for input. The launcher now speaks a short opening instruction using
+the existing Nova output before opening the browser. Start voice has autofocus
+so Enter activates it. After connection the existing Marin greeting explicitly
+says “PubMed ready. I am listening.” Microphone activation remains user initiated.
+Startup speech failure prints a recovery instruction; it does not prevent launch.
+This change is included in the September 18 startup-accessibility checkpoint
+on realtime-reader. Audible user verification remains outstanding.
+All 41 offline tests passed again on September 18; no microphone or audio
+was activated. The previous checkpoint is 4a28236; Git history records the
+new checkpoint hash.

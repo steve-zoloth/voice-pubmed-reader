@@ -1,8 +1,8 @@
 <!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Voice PubMed Reader — Realtime</title>
 <style>body{font:1.3rem system-ui;max-width:48rem;margin:3rem auto;padding:1rem;color:#142633;background:#f6f8fa}button{font:inherit;padding:1rem;margin:.3rem}button:focus{outline:4px solid #0076b5}#transcript{white-space:pre-wrap}</style>
 <h1>Voice PubMed Reader</h1><p>Realtime voice reader. Your microphone audio and requested article text are sent to OpenAI. You will hear an AI-generated voice.</p>
-<button id="start">Start voice</button><button id="stop" disabled>Stop speaking</button><button id="end" disabled>End session</button>
-<p id="status" role="status">Ready. Activate Start voice and allow microphone access.</p><p>Try “read the abstract,” “go to results,” “what sections are available,” “skip ahead ten seconds,” or “keep reading.” Authors are omitted unless requested. Time skips are approximate.</p><p>Muse fallback: end this session, then open run_voice_pubmed_bot.command.</p>
+<button id="start" autofocus>Start voice</button><button id="stop" disabled>Stop speaking</button><button id="end" disabled>End session</button>
+<p id="status" role="status">Voice is off. Press Enter to start voice and allow microphone access.</p><p>Try “read the abstract,” “go to results,” “what sections are available,” “skip ahead ten seconds,” or “keep reading.” Authors are omitted unless requested. Time skips are approximate.</p><p>Muse fallback: end this session, then open run_voice_pubmed_bot.command.</p>
 <audio id="audio" autoplay controls aria-label="AI voice playback"></audio><details><summary>Spoken transcript</summary><div id="transcript"></div></details>
 <script>
 const token=location.hash.slice(1); history.replaceState(null,'',location.pathname);
@@ -61,7 +61,7 @@ start.onclick=async()=>{
    stream.getTracks().forEach(track=>pc.addTrack(track,stream));dc=pc.createDataChannel('oai-events');
    dc.onmessage=e=>{try{handle(JSON.parse(e.data),sessionGeneration);}catch{cleanup();announce('Voice data error. Restart voice.');}};
    dc.onclose=()=>{if(sessionGeneration===generation){cleanup();announce('Voice session ended.');}};
-   dc.onopen=()=>{clearTimeout(timer);stop.disabled=end.disabled=false;statusEl.textContent='Listening. You can interrupt at any time.';send({type:'response.create',response:{instructions:"Say only: I am your AI PubMed reader. What would you like to look up?"}});};
+   dc.onopen=()=>{clearTimeout(timer);stop.disabled=end.disabled=false;statusEl.textContent='Listening. You can interrupt at any time.';send({type:'response.create',response:{instructions:"Say only: PubMed ready. I am listening."}});};
    const offer=await pc.createOffer();await pc.setLocalDescription(offer);
    const result=await post('/session',{sdp:offer.sdp});
    if(sessionGeneration!==generation)return;
