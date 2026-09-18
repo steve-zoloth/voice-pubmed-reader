@@ -130,3 +130,18 @@ No live audio was started for verification. End session in the browser before
 quitting the launcher. See ANDREW_SETUP.md for Siri setup and installation limits.
 Andrew wants both Mac and iPhone/iPad. Mobile secure hosting/private-access choice
 is pending; no mobile deployment or self-contained Andrew installer is claimed.
+
+## Independent hosting preparation — September 18, 2026
+
+Steve selected a separate service in his existing cloud account and confirmed
+CardioClaw and VPR serve different purposes; he eventually wants to share both.
+VPR has its own cloud Linux user, folders, environment, data and disabled service.
+47 offline tests pass; Linux import and service-definition checks pass. The
+existing CardioClaw and HTTPS services remain active. No public VPR route or
+API credentials are installed yet. Credential transfer was blocked by automatic
+approval review pending explicit user permission. See HOSTED_SETUP.md.
+
+The Mac Shortcuts app now contains Read PubMed -> Open Voice PubMed Reader.
+It was not run. The dummy native launcher lifecycle test remains unverified:
+automatic approval review requires explicit confirmation to launch that locally
+built test app. No live microphone or speech was activated.

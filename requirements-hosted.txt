@@ -1,0 +1,2 @@
+biopython==1.85
+websockets==15.0.1
