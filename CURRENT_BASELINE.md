@@ -161,3 +161,10 @@ Login recovery: /login now always shows the sign-in form, including when already
 signed in. Rejected login origins include a Return to login link. Same-origin
 referrer policy preserves same-site form metadata. Four hosted tests pass; live
 login page verified. User retry is still needed to confirm reported rejection.
+
+Cloud retrieval fix: reproduced search failure under service restrictions because
+Entrez tried to create its XML parser cache in read-only /opt/vpr/.config. Hosted
+startup now sets Entrez.local_cache to /var/lib/vpr/entrez-cache. Deployed and
+verified live search (five articles), pagination (ten), and abstract retrieval
+under the same filesystem restrictions. 25 relevant offline tests passed.
+No voice or microphone was started.

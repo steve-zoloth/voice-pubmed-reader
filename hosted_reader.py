@@ -156,6 +156,8 @@ def main():
     backend.Entrez.email = os.environ['NCBI_EMAIL']
     backend.REF_FILE = str(Path(os.environ.get('VPR_DATA_DIR', '/data')) / 'references.txt')
     Path(backend.REF_FILE).parent.mkdir(parents=True, exist_ok=True)
+    # Entrez creates XML parser caches lazily; the application folder is read-only.
+    backend.Entrez.local_cache = str(Path(backend.REF_FILE).parent / 'entrez-cache')
     server = make_server(origin, code, ('127.0.0.1', int(os.environ.get('PORT', '8080'))))
     try:
         server.serve_forever()
