@@ -43,7 +43,7 @@ def make_server(origin, access_code, address=('127.0.0.1', 8080)):
             self.send_header('Content-Length', str(len(body)))
             self.send_header('Cache-Control', 'no-store')
             self.send_header('X-Content-Type-Options', 'nosniff')
-            self.send_header('Referrer-Policy', 'no-referrer')
+            self.send_header('Referrer-Policy', 'same-origin')
             self.send_header('Content-Security-Policy', "frame-ancestors 'none'")
             for key, value in (headers or {}).items():
                 self.send_header(key, value)
@@ -69,7 +69,7 @@ def make_server(origin, access_code, address=('127.0.0.1', 8080)):
             if self.path not in ('/', '/login'):
                 return self.reply(404, b'{}')
             session = self.session()
-            if not session:
+            if self.path == '/login' or not session:
                 return self.reply(200, LOGIN, 'text/html; charset=utf-8')
             page = Path(__file__).with_name('realtime_reader.html').read_text()
             page = page.replace("const token=location.hash.slice(1);", 'const token=' + json.dumps(session['csrf']) + ';')
@@ -80,6 +80,8 @@ def make_server(origin, access_code, address=('127.0.0.1', 8080)):
 
         def do_POST(self):
             if self.headers.get('Origin') != origin:
+                if self.path == '/login':
+                    return self.reply(403, b'<html lang="en"><title>Sign in again</title><main><h1>Please sign in again</h1><p>Open the login page in Safari and try again.</p><a href="/login">Return to login</a></main></html>', 'text/html; charset=utf-8')
                 return self.reply(403, b'{"error":"Request origin rejected."}')
             try:
                 length = int(self.headers.get('Content-Length', 0))

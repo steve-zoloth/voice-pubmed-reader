@@ -156,3 +156,8 @@ CardioClaw services remained active and their application configuration unchange
 Private access instructions are in ~/Documents/VPR private access.txt, outside Git.
 No voice session was started; iPhone/iPad listening and Andrew acceptance remain
 pending. Prior blocked credential-transfer status is superseded by this approval.
+
+Login recovery: /login now always shows the sign-in form, including when already
+signed in. Rejected login origins include a Return to login link. Same-origin
+referrer policy preserves same-site form metadata. Four hosted tests pass; live
+login page verified. User retry is still needed to confirm reported rejection.

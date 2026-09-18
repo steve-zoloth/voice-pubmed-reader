@@ -57,6 +57,16 @@ class HostedTests(unittest.TestCase):
         self.assertEqual(self.request('POST', '/tool', payload, first)[0], 200)
         self.assertEqual(self.request('POST', '/tool', payload, second)[0], 400)
 
+    def test_login_recovery(self):
+        headers = self.login()
+        status, response_headers, page = self.request("GET", "/login", headers=headers)
+        self.assertEqual(status, 200)
+        self.assertIn("Access code", page)
+        self.assertEqual(response_headers["Referrer-Policy"], "same-origin")
+        status, _, page = self.request("POST", "/login", "code=wrong", {"Origin": "null"})
+        self.assertEqual(status, 403)
+        self.assertIn('href="/login"', page)
+
     def test_invalid_deployment_configuration(self):
         for origin, code in [('http://reader.test', self.code), (self.origin, 'short')]:
             with self.assertRaises(ValueError):
