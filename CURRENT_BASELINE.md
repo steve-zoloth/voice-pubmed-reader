@@ -175,3 +175,7 @@ PMID using PubMed independently of PMC availability. Metadata requests preserve
 the prior reading passage; abstract defaults remain unchanged. 50 offline tests
 passed and live hosted journal/PMID/citation checks passed. Deployed to VPR only.
 Steve reports hosted reader seems to work; mobile audible metadata retry remains.
+
+Unavailable full text now reports only "PMC full text unavailable." and waits;
+it no longer automatically reads the abstract. Previous reading position and
+repeat passage are preserved. 20 relevant tests pass; deployed to cloud VPR.

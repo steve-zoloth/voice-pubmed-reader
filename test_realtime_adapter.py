@@ -83,11 +83,17 @@ class ReaderTests(unittest.TestCase):
         with patch.dict(rt.os.environ, {'VOICE_PUBMED_TURN_EAGERNESS': 'auto'}):
             self.assertEqual(rt.session_config()['audio']['input']['turn_detection']['eagerness'], 'auto')
 
-    def test_full_text_fallback(self):
+    def test_unavailable_full_text_waits_and_preserves_reading(self):
         self.search()
-        with patch.object(rt.structured_reader,'full_text',return_value=[]) as full, patch.object(rt.structured_reader,'abstract',return_value=([('Abstract','Abstract text')], 'Authors')):
-            self.assertIn('PMC full text unavailable', self.reader.execute('full_text')['text'])
+        with patch.object(rt.structured_reader,'abstract',return_value=([('Abstract','Abstract text')], 'Authors')):
+            prior = self.reader.execute('abstract')
+        state = (self.reader.position, list(self.reader.words), list(self.reader.headings))
+        with patch.object(rt.structured_reader,'full_text',return_value=[]) as full, patch.object(rt.structured_reader,'abstract') as abstract:
+            self.assertEqual(self.reader.execute('full_text')['text'], 'PMC full text unavailable.')
+            abstract.assert_not_called()
         full.assert_called_once_with('1')
+        self.assertEqual(self.reader.execute('repeat'), prior)
+        self.assertEqual((self.reader.position, self.reader.words, self.reader.headings), state)
     def test_save_reuses_backend_without_nova(self):
         self.search()
         with tempfile.TemporaryDirectory() as folder, patch.object(rt.backend,'REF_FILE',str(Path(folder)/'refs.txt')), patch.object(rt.backend,'speak') as speak:

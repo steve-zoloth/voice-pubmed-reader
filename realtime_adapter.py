@@ -161,7 +161,7 @@ class Reader:
         elif action in ('abstract', 'full_text'):
             prefix = self.load(action)
             if action == 'full_text' and prefix:
-                prefix += self.load('abstract')
+                return {'text': prefix.strip()}
             text = prefix + self.passage()
         elif action == 'article_type':
             pmid = self.ids[self.index]
