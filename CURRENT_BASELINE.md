@@ -145,3 +145,14 @@ The Mac Shortcuts app now contains Read PubMed -> Open Voice PubMed Reader.
 It was not run. The dummy native launcher lifecycle test remains unverified:
 automatic approval review requires explicit confirmation to launch that locally
 built test app. No live microphone or speech was activated.
+
+## Cloud activation — September 18, 2026
+
+After explicit user permission, the existing VPR API key was installed in its
+root-only cloud configuration and vpr.service enabled. VPR is live at
+https://vpr.157-151-155-75.sslip.io independently of the Mac. TLS, health, private
+sign-in, authenticated page and unauthenticated session rejection passed.
+CardioClaw services remained active and their application configuration unchanged.
+Private access instructions are in ~/Documents/VPR private access.txt, outside Git.
+No voice session was started; iPhone/iPad listening and Andrew acceptance remain
+pending. Prior blocked credential-transfer status is superseded by this approval.

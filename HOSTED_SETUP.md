@@ -9,13 +9,16 @@ The existing Caddy HTTPS gateway can serve both applications with different name
 
 ## Current status
 
-**Prepared, not activated.** The service definition is installed and validated,
-but disabled. Runtime imports pass on Linux. 47 local offline tests pass,
-including hosted authentication, origin/CSRF rejection and browser-session isolation.
-No API key has been transferred. No access code has been generated or saved.
-No public VPR route has been installed. No mobile or audible acceptance is claimed.
+**Activated September 18, 2026 after Steve explicitly approved transferring the
+existing VPR API key.** The key is stored in the root-only cloud environment file.
+VPR is enabled at boot. Public TLS, health, private sign-in, authenticated reader
+and unauthenticated voice-request rejection all passed. CardioClaw services and
+Caddy remained active. No microphone or paid voice session was started.
 
-Proposed address: https://vpr.157-151-155-75.sslip.io (not yet active).
+Live address: https://vpr.157-151-155-75.sslip.io
+Private access instructions are in `~/Documents/VPR private access.txt` (mode 600),
+outside Git. No credentials are committed. Mobile listening remains unverified.
+
 The temporary address depends on third-party sslip.io DNS and the server IP.
 A permanent user-owned domain can replace it later.
 
@@ -24,9 +27,8 @@ A permanent user-owned domain can replace it later.
 Provide a VPR OpenAI API key in `/etc/vpr/environment` (root-only mode 600),
 plus VPR_ACCESS_CODE (at least 32 random characters), VPR_PUBLIC_ORIGIN,
 NCBI_EMAIL, VPR_DATA_DIR=/var/lib/vpr and PORT=8080. Never commit this file.
-User approval is required before copying the existing local API key: automatic
-approval review explicitly blocked that transfer. A new dedicated VPR key is
-also an option. Do not reuse CardioClaw credentials.
+Steve explicitly approved copying the existing VPR key before activation.
+Do not reuse CardioClaw credentials.
 
 Back up `/etc/caddy/Caddyfile`, append the prepared `/opt/vpr/vpr.caddy`
 block without modifying the existing block, validate Caddy configuration,

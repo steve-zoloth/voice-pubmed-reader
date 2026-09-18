@@ -1,0 +1,13 @@
+
+# Independent Voice PubMed Reader service.
+vpr.157-151-155-75.sslip.io {
+    encode gzip
+    request_body {
+        max_size 100KB
+    }
+    header {
+        Strict-Transport-Security "max-age=31536000"
+        Permissions-Policy "microphone=(self), camera=(), geolocation=()"
+    }
+    reverse_proxy 127.0.0.1:8080
+}

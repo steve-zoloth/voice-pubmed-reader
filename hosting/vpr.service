@@ -1,0 +1,25 @@
+[Unit]
+Description=Private Voice PubMed Reader
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=vpr
+Group=vpr
+WorkingDirectory=/opt/vpr
+EnvironmentFile=/etc/vpr/environment
+ExecStart=/opt/vpr/venv/bin/python -B /opt/vpr/hosted_reader.py
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/vpr
+MemoryMax=256M
+CPUQuota=50%
+TasksMax=64
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target
