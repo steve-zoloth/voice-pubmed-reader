@@ -168,3 +168,10 @@ startup now sets Entrez.local_cache to /var/lib/vpr/entrez-cache. Deployed and
 verified live search (five articles), pagination (ten), and abstract retrieval
 under the same filesystem restrictions. 25 relevant offline tests passed.
 No voice or microphone was started.
+
+On-request citation metadata: added journal, pmid and citation tool actions;
+existing authors action retained. Citation returns title, authors, journal and
+PMID using PubMed independently of PMC availability. Metadata requests preserve
+the prior reading passage; abstract defaults remain unchanged. 50 offline tests
+passed and live hosted journal/PMID/citation checks passed. Deployed to VPR only.
+Steve reports hosted reader seems to work; mobile audible metadata retry remains.

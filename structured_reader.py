@@ -55,3 +55,10 @@ def publication_types(pmids):
     return {text(article.find('./MedlineCitation/PMID')):
             [text(node) for node in article.findall('./MedlineCitation/Article/PublicationTypeList/PublicationType')]
             for article in root.findall('.//PubmedArticle')}
+
+
+def journal(pmid):
+    """Journal metadata comes from PubMed, independently of PMC availability."""
+    with backend.Entrez.efetch(db='pubmed', id=pmid, retmode='xml') as handle:
+        root = ET.fromstring(handle.read())
+    return text(root.find('.//Article/Journal/Title')) or 'Journal title unavailable.'

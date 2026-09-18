@@ -14,6 +14,18 @@ class ReaderTests(unittest.TestCase):
     def search(self):
         with patch.object(rt.backend, 'search_pubmed', return_value=(['One','Two'],['1','2'])):
             self.reader.execute('search', 'sarcopenia and elderly males')
+    def test_citation_commands_preserve_reading_without_full_text(self):
+        self.search()
+        self.reader.last = 'Prior passage'
+        with patch.object(rt.structured_reader, 'journal', return_value='Medical Journal'), patch.object(rt.structured_reader, 'abstract', return_value=([], 'Jane Smith')), patch.object(rt.structured_reader, 'full_text', side_effect=AssertionError('Must not need PMC')):
+            self.assertEqual(self.reader.execute('pmid')['text'], 'PMID: 1.')
+            self.assertEqual(self.reader.execute('journal')['text'], 'Medical Journal')
+            self.assertEqual(self.reader.execute('authors')['text'], 'Jane Smith')
+            citation = self.reader.execute('citation')['text']
+            for value in ('One', 'Jane Smith', 'Medical Journal', 'PMID: 1'):
+                self.assertIn(value, citation)
+            self.assertEqual(self.reader.execute('repeat')['text'], 'Prior passage')
+
     def test_navigation_and_retry(self):
         self.search()
         self.assertIn('Two', self.reader.execute('next')['text'])
