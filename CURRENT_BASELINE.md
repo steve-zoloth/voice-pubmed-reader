@@ -179,3 +179,8 @@ Steve reports hosted reader seems to work; mobile audible metadata retry remains
 Unavailable full text now reports only "PMC full text unavailable." and waits;
 it no longer automatically reads the abstract. Previous reading position and
 repeat passage are preserved. 20 relevant tests pass; deployed to cloud VPR.
+
+Steve confirmed the unavailable-full-text behavior works. Prepared Andrew hosted
+setup guide with private-code handoff, Safari/Siri launch, and independent-use
+checks. The old Mac installation guide is retained and points to this new guide.
+Andrew acceptance and Siri/device-specific tests remain pending.

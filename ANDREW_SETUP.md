@@ -1,3 +1,5 @@
+> For Andrew’s current website setup, use [ANDREW_HOSTED_SETUP.md](ANDREW_HOSTED_SETUP.md). The local launcher instructions below are preserved as historical reference; the old mobile-pending statements are superseded.
+
 # Voice PubMed Reader — Mac launch and Andrew handoff
 
 ## On Steve's configured Mac
