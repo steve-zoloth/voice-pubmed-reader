@@ -184,3 +184,7 @@ Steve confirmed the unavailable-full-text behavior works. Prepared Andrew hosted
 setup guide with private-code handoff, Safari/Siri launch, and independent-use
 checks. The old Mac installation guide is retained and points to this new guide.
 Andrew acceptance and Siri/device-specific tests remain pending.
+
+V2 planning: Steve requested all recommendations be held pending Andrew’s
+feedback. V2_CHECKLIST.md consolidates proposals, exclusions, acceptance criteria
+and provisional effort estimates. It is not implementation authorization.
